@@ -1,232 +1,161 @@
-import { useState } from "react";
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>ПОДБОРКИН</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-const mockData = {
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      padding: 15px;
+      border-right: 1px solid #ddd;
+    }
+
+    .content {
+      flex: 1;
+      padding: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    max-width: 768px {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h2>ПОДБОРКИН</h2>
+  <input id="search" placeholder="Введите категорию..." />
+</header>
+
+<div class="container">
+
+  <div class="sidebar">
+    <p>Макс. цена: <span id="priceVal">200000</span></p>
+    <input type="range" id="price" min="1000" max="200000" value="200000">
+
+    <p>Доставка до: <span id="deliveryVal">10</span> дней</p>
+    <input type="range" id="delivery" min="1" max="10" value="10">
+  </div>
+
+  <div class="content">
+    <div id="products" class="grid"></div>
+  </div>
+
+</div>
+
+<script>
+const data = {
   "телефоны": [
-    { id: 1, name: "iPhone 15 Pro", price: 120000, delivery: 2, image: "https://source.unsplash.com/300x300/?iphone" },
-    { id: 2, name: "Samsung Galaxy S24", price: 95000, delivery: 3, image: "https://source.unsplash.com/300x300/?samsung-smartphone" },
-    { id: 3, name: "Google Pixel 8", price: 85000, delivery: 4, image: "https://source.unsplash.com/300x300/?pixel-phone" },
-    { id: 4, name: "Xiaomi 13 Pro", price: 70000, delivery: 4, image: "https://source.unsplash.com/300x300/?xiaomi-phone" },
-    { id: 5, name: "OnePlus 11", price: 75000, delivery: 5, image: "https://source.unsplash.com/300x300/?oneplus-phone" },
-    { id: 6, name: "iPhone 14", price: 90000, delivery: 3, image: "https://source.unsplash.com/300x300/?iphone14" },
-    { id: 7, name: "Samsung Galaxy A54", price: 45000, delivery: 4, image: "https://source.unsplash.com/300x300/?android-phone" },
-    { id: 8, name: "Huawei P60", price: 80000, delivery: 5, image: "https://source.unsplash.com/300x300/?huawei-phone" },
+    {name:"iPhone 15 Pro",price:120000,delivery:2,img:"https://source.unsplash.com/300x300/?iphone"},
+    {name:"Samsung Galaxy S24",price:95000,delivery:3,img:"https://source.unsplash.com/300x300/?samsung-phone"},
+    {name:"Google Pixel 8",price:85000,delivery:4,img:"https://source.unsplash.com/300x300/?pixel-phone"},
+    {name:"Xiaomi 13 Pro",price:70000,delivery:4,img:"https://source.unsplash.com/300x300/?xiaomi-phone"},
+    {name:"OnePlus 11",price:75000,delivery:5,img:"https://source.unsplash.com/300x300/?oneplus"},
+    {name:"iPhone 14",price:90000,delivery:3,img:"https://source.unsplash.com/300x300/?iphone14"},
+    {name:"Samsung A54",price:45000,delivery:4,img:"https://source.unsplash.com/300x300/?android-phone"},
+    {name:"Huawei P60",price:80000,delivery:5,img:"https://source.unsplash.com/300x300/?huawei"}
   ],
 
   "ноутбуки": [
-    { id: 1, name: "MacBook Air M2", price: 130000, delivery: 2, image: "https://source.unsplash.com/300x300/?macbook" },
-    { id: 2, name: "MacBook Pro 14", price: 180000, delivery: 3, image: "https://source.unsplash.com/300x300/?macbook-pro" },
-    { id: 3, name: "Dell XPS 13", price: 115000, delivery: 3, image: "https://source.unsplash.com/300x300/?dell-laptop" },
-    { id: 4, name: "ASUS ROG Zephyrus G14", price: 150000, delivery: 5, image: "https://source.unsplash.com/300x300/?gaming-laptop" },
-    { id: 5, name: "Lenovo ThinkPad X1 Carbon", price: 140000, delivery: 4, image: "https://source.unsplash.com/300x300/?thinkpad" },
-    { id: 6, name: "HP Spectre x360", price: 125000, delivery: 4, image: "https://source.unsplash.com/300x300/?hp-laptop" },
-    { id: 7, name: "Acer Swift 3", price: 80000, delivery: 5, image: "https://source.unsplash.com/300x300/?acer-laptop" },
-    { id: 8, name: "MSI Katana", price: 110000, delivery: 5, image: "https://source.unsplash.com/300x300/?msi-laptop" },
-  ],
-
-  "наушники": [
-    { id: 1, name: "AirPods Pro 2", price: 25000, delivery: 2, image: "https://source.unsplash.com/300x300/?airpods" },
-    { id: 2, name: "Sony WH-1000XM5", price: 35000, delivery: 3, image: "https://source.unsplash.com/300x300/?sony-headphones" },
-    { id: 3, name: "Bose QuietComfort 45", price: 32000, delivery: 4, image: "https://source.unsplash.com/300x300/?bose-headphones" },
-    { id: 4, name: "Samsung Galaxy Buds2 Pro", price: 18000, delivery: 3, image: "https://source.unsplash.com/300x300/?earbuds" },
-    { id: 5, name: "JBL Tune 760NC", price: 12000, delivery: 5, image: "https://source.unsplash.com/300x300/?jbl-headphones" },
-    { id: 6, name: "Sony WF-1000XM4", price: 22000, delivery: 3, image: "https://source.unsplash.com/300x300/?wireless-earbuds" },
-    { id: 7, name: "Beats Studio3", price: 27000, delivery: 4, image: "https://source.unsplash.com/300x300/?beats-headphones" },
-    { id: 8, name: "Sennheiser Momentum 4", price: 30000, delivery: 4, image: "https://source.unsplash.com/300x300/?sennheiser-headphones" },
-  ],
-
-  "кроссовки": [
-    { id: 1, name: "Nike Air Force 1", price: 12000, delivery: 3, image: "https://source.unsplash.com/300x300/?nike-shoes" },
-    { id: 2, name: "Adidas Ultraboost", price: 15000, delivery: 4, image: "https://source.unsplash.com/300x300/?adidas-shoes" },
-    { id: 3, name: "New Balance 574", price: 11000, delivery: 5, image: "https://source.unsplash.com/300x300/?new-balance" },
-    { id: 4, name: "Puma RS-X", price: 10000, delivery: 4, image: "https://source.unsplash.com/300x300/?puma-shoes" },
-    { id: 5, name: "Nike Air Max 270", price: 14000, delivery: 3, image: "https://source.unsplash.com/300x300/?air-max" },
-    { id: 6, name: "Adidas NMD", price: 13000, delivery: 4, image: "https://source.unsplash.com/300x300/?adidas-nmd" },
-    { id: 7, name: "Reebok Classic", price: 9000, delivery: 5, ima
-
-
-ge: "https://source.unsplash.com/300x300/?reebok" },
-    { id: 8, name: "Asics Gel-Lyte III", price: 12000, delivery: 4, image: "https://source.unsplash.com/300x300/?asics" },
-  ],
-
-  "часы": [
-    { id: 1, name: "Apple Watch Series 9", price: 45000, delivery: 2, image: "https://source.unsplash.com/300x300/?apple-watch" },
-    { id: 2, name: "Samsung Galaxy Watch 6", price: 35000, delivery: 3, image: "https://source.unsplash.com/300x300/?samsung-watch" },
-    { id: 3, name: "Garmin Fenix 7", price: 60000, delivery: 4, image: "https://source.unsplash.com/300x300/?garmin-watch" },
-    { id: 4, name: "Huawei Watch GT 4", price: 30000, delivery: 3, image: "https://source.unsplash.com/300x300/?huawei-watch" },
-    { id: 5, name: "Amazfit GTR 4", price: 20000, delivery: 4, image: "https://source.unsplash.com/300x300/?smartwatch" },
-    { id: 6, name: "Fitbit Sense 2", price: 28000, delivery: 3, image: "https://source.unsplash.com/300x300/?fitbit" },
-    { id: 7, name: "Polar Vantage V2", price: 50000, delivery: 4, image: "https://source.unsplash.com/300x300/?sports-watch" },
-    { id: 8, name: "Casio G-Shock", price: 15000, delivery: 5, image: "https://source.unsplash.com/300x300/?gshock" },
-  ],
-
-  "планшеты": [
-    { id: 1, name: "iPad Pro", price: 90000, delivery: 2, image: "https://source.unsplash.com/300x300/?ipad" },
-    { id: 2, name: "iPad Air", price: 70000, delivery: 3, image: "https://source.unsplash.com/300x300/?ipad-air" },
-    { id: 3, name: "Samsung Galaxy Tab S9", price: 80000, delivery: 3, image: "https://source.unsplash.com/300x300/?samsung-tablet" },
-    { id: 4, name: "Lenovo Tab P11", price: 35000, delivery: 4, image: "https://source.unsplash.com/300x300/?tablet" },
-    { id: 5, name: "Huawei MatePad", price: 40000, delivery: 4, image: "https://source.unsplash.com/300x300/?tablet-device" },
-    { id: 6, name: "Amazon Fire HD 10", price: 20000, delivery: 5, image: "https://source.unsplash.com/300x300/?tablet-screen" },
-    { id: 7, name: "Xiaomi Pad 6", price: 45000, delivery: 4, image: "https://source.unsplash.com/300x300/?android-tablet" },
-    { id: 8, name: "Microsoft Surface Go", price: 60000, delivery: 3, image: "https://source.unsplash.com/300x300/?surface-tablet" },
-  ],
-
-  "телевизоры": [
-    { id: 1, name: "Samsung QLED 4K", price: 80000, delivery: 4, image: "https://source.unsplash.com/300x300/?tv" },
-    { id: 2, name: "LG OLED C3", price: 120000, delivery: 5, image: "https://source.unsplash.com/300x300/?oled-tv" },
-    { id: 3, name: "Sony Bravia XR", price: 110000, delivery: 4, image: "https://source.unsplash.com/300x300/?sony-tv" },
-    { id: 4, name: "TCL 4K Smart TV", price: 60000, delivery: 5, image: "https://source.unsplash.com/300x300/?smart-tv" },
-    { id: 5, name: "Hisense ULED", price: 70000, delivery: 4, image: "https://source.unsplash.com/300x300/?television" },
-    { id: 6, name: "Philips Ambilight", price: 90000, delivery: 5, image: "https://source.unsplash.com/300x300/?tv-screen" },
-    { id: 7, name: "Xiaomi Mi TV", price: 50000, delivery: 4, image: "https://source.unsplash.com/300x300/?xiaomi-tv" },
-    { id: 8, name: "Panasonic 4K TV", price: 85000, delivery: 5, image: "https://source.unsplash.com/300x300/?home-tv" },
-  ],
-
-  "приставки": [
-    { id: 1, name: "PlayStation 5", price: 60000, delivery: 2, image: "https://source.unsplash.com/300x300/?ps5" },
-    { id: 2, name: "Xbox Series X", price: 58000, delivery: 3, image: "https://source.unsplash.com/300x300/?xbox" },
-    { id: 3, name: "Nintendo Switch", price: 35000, delivery: 4, image: "https://source.unsplash.com/300x300/?nintendo-switch" },
-    { id: 4, name: "PlayStation 4", price: 40000, delivery: 5, image: "https://source.unsplash.com/300x300/?playstation" },
-    { id: 5, name: "Xbox Series S", price: 45000, delivery: 3, image: "https://source.unsplash.com/300x300/?xbox-console" },
-    { id: 6, name: "Steam Deck", price: 70000, delivery: 4, image: "https://source.unsplash.com/300x300/?steam-deck" },
-    { id: 7, name: "Nin
-
-
-tendo Switch Lite", price: 30000, delivery: 5, image: "https://source.unsplash.com/300x300/?handheld-console" },
-    { id: 8, name: "Retro Console", price: 15000, delivery: 5, image: "https://source.unsplash.com/300x300/?gaming-console" },
-  ],
-
-  "камеры": [
-    { id: 1, name: "Canon EOS R6", price: 150000, delivery: 3, image: "https://source.unsplash.com/300x300/?canon-camera" },
-    { id: 2, name: "Sony Alpha A7 III", price: 140000, delivery: 4, image: "https://source.unsplash.com/300x300/?sony-camera" },
-    { id: 3, name: "Nikon Z6", price: 130000, delivery: 4, image: "https://source.unsplash.com/300x300/?nikon-camera" },
-    { id: 4, name: "Fujifilm X-T5", price: 120000, delivery: 5, image: "https://source.unsplash.com/300x300/?fujifilm-camera" },
-    { id: 5, name: "GoPro Hero 12", price: 50000, delivery: 3, image: "https://source.unsplash.com/300x300/?gopro" },
-    { id: 6, name: "DJI Pocket 3", price: 60000, delivery: 4, image: "https://source.unsplash.com/300x300/?dji-camera" },
-    { id: 7, name: "Sony ZV-E10", price: 90000, delivery: 4, image: "https://source.unsplash.com/300x300/?vlog-camera" },
-    { id: 8, name: "Canon EOS M50", price: 80000, delivery: 5, image: "https://source.unsplash.com/300x300/?mirrorless-camera" },
-  ],
-
-  "колонки": [
-    { id: 1, name: "JBL Charge 5", price: 12000, delivery: 2, image: "https://source.unsplash.com/300x300/?jbl-speaker" },
-    { id: 2, name: "JBL Flip 6", price: 9000, delivery: 3, image: "https://source.unsplash.com/300x300/?portable-speaker" },
-    { id: 3, name: "Sony SRS-XB43", price: 15000, delivery: 4, image: "https://source.unsplash.com/300x300/?sony-speaker" },
-    { id: 4, name: "Bose SoundLink", price: 18000, delivery: 3, image: "https://source.unsplash.com/300x300/?bose-speaker" },
-    { id: 5, name: "Marshall Emberton", price: 20000, delivery: 4, image: "https://source.unsplash.com/300x300/?marshall-speaker" },
-    { id: 6, name: "Xiaomi Mi Speaker", price: 7000, delivery: 5, image: "https://source.unsplash.com/300x300/?bluetooth-speaker" },
-    { id: 7, name: "Anker Soundcore", price: 6000, delivery: 4, image: "https://source.unsplash.com/300x300/?speaker" },
-    { id: 8, name: "Harman Kardon Onyx", price: 25000, delivery: 5, image: "https://source.unsplash.com/300x300/?harman-speaker" },
-  ],
-
-  "мышки": [
-    { id: 1, name: "Logitech MX Master 3", price: 10000, delivery: 2, image: "https://source.unsplash.com/300x300/?mouse" },
-    { id: 2, name: "Razer DeathAdder V2", price: 8000, delivery: 3, image: "https://source.unsplash.com/300x300/?gaming-mouse" },
-    { id: 3, name: "Logitech G Pro X", price: 12000, delivery: 3, image: "https://source.unsplash.com/300x300/?logitech-mouse" },
-    { id: 4, name: "SteelSeries Rival 5", price: 7000, delivery: 4, image: "https://source.unsplash.com/300x300/?rgb-mouse" },
-    { id: 5, name: "HyperX Pulsefire", price: 6000, delivery: 4, image: "https://source.unsplash.com/300x300/?pc-mouse" },
-    { id: 6, name: "Apple Magic Mouse", price: 9000, delivery: 3, image: "https://source.unsplash.com/300x300/?apple-mouse" },
-    { id: 7, name: "Corsair M65", price: 8500, delivery: 4, image: "https://source.unsplash.com/300x300/?corsair-mouse" },
-    { id: 8, name: "HP Wireless Mouse", price: 3000, delivery: 5, image: "https://source.unsplash.com/300x300/?wireless-mouse" },
-  ],
-
-  "клавиатуры": [
-    { id: 1, name: "Logitech MX Keys", price: 12000, delivery: 2, image: "https://source.unsplash.com/300x300/?keyboard" },
-    { id: 2, name: "Keychron K6", price: 10000, delivery: 3, image: "https://source.unsplash.com/300x300/?mechanical-keyboard" },
-    { id: 3, name: "Razer BlackWidow", price: 14000, delivery: 3, image: "https://source.unsplash.com/300x300/?gaming-keyboard" },
-    { id: 4, name: "Corsair K95 RGB", price: 16000, delivery: 4, image: "https://source.unsplash.com/300x300/?rgb-keyboard" },
-    { id: 5, name: "Apple Magic Keyboard", price: 11000, delivery: 3, image: "https://source.unsplash.com/300x300/?apple-keyboard" },
-
-
-{ id: 6, name: "HyperX Alloy Core", price: 8000, delivery: 4, image: "https://source.unsplash.com/300x300/?pc-keyboard" },
-    { id: 7, name: "SteelSeries Apex Pro", price: 18000, delivery: 4, image: "https://source.unsplash.com/300x300/?steelseries-keyboard" },
-    { id: 8, name: "Microsoft Ergonomic Keyboard", price: 9000, delivery: 5, image: "https://source.unsplash.com/300x300/?ergonomic-keyboard" },
-  ],
+    {name:"MacBook Air M2",price:130000,delivery:2,img:"https://source.unsplash.com/300x300/?macbook"},
+    {name:"MacBook Pro 14",price:180000,delivery:3,img:"https://source.unsplash.com/300x300/?macbook-pro"},
+    {name:"Dell XPS 13",price:115000,delivery:3,img:"https://source.unsplash.com/300x300/?dell-laptop"},
+    {name:"ASUS ROG G14",price:150000,delivery:5,img:"https://source.unsplash.com/300x300/?gaming-laptop"},
+    {name:"ThinkPad X1",price:140000,delivery:4,img:"https://source.unsplash.com/300x300/?thinkpad"},
+    {name:"HP Spectre",price:125000,delivery:4,img:"https://source.unsplash.com/300x300/?hp-laptop"},
+    {name:"Acer Swift 3",price:80000,delivery:5,img:"https://source.unsplash.com/300x300/?acer"},
+    {name:"MSI Katana",price:110000,delivery:5,img:"https://source.unsplash.com/300x300/?msi"}
+  ]
 };
 
-export default function Podborkin() {
-  const [query, setQuery] = useState("телефоны");
-  const [maxPrice, setMaxPrice] = useState(200000);
-  const [maxDelivery, setMaxDelivery] = useState(10);
-  const [showFilters, setShowFilters] = useState(false);
+const search = document.getElementById("search");
+const price = document.getElementById("price");
+const delivery = document.getElementById("delivery");
+const productsDiv = document.getElementById("products");
 
-  const products = mockData[query] || [];
+function render() {
+  const category = search.value.toLowerCase();
+  const items = data[category] || [];
 
-  const filtered = products.filter(
-    (p) => p.price <= maxPrice && p.delivery <= maxDelivery
-  );
+  productsDiv.innerHTML = "";
 
-  return (
-    <div className="flex flex-col md:flex-row h-screen font-sans">
-      {/* Mobile header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b">
-        <h1 className="text-xl font-bold">ПОДБОРКИН</h1>
-        <button onClick={() => setShowFilters(!showFilters)} className="border px-3 py-1 rounded">
-          Фильтры
-        </button>
-      </div>
+  items
+    .filter(i => i.price <= price.value && i.delivery <= delivery.value)
+    .forEach(i => {
+      const el = document.createElement("div");
+      el.className = "card";
+      el.innerHTML = `
+        <img src="${i.img}">
+        <h4>${i.name}</h4>
+        <
 
-      {/* Sidebar */}
-      <div className={`fixed md:static top-0 left-0 h-full w-64 bg-white z-20 p-4 border-r transform transition-transform ${
-        showFilters ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-      }`}>
-        <h2 className="text-xl font-bold mb-4">Фильтры</h2>
 
-        <label className="block mb-2">Макс. цена: {maxPrice} ₽</label>
-        <input
-          type="range"
-          min="1000"
-          max="200000"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(Number(e.target.value))}
-          className="w-full mb-4"
-        />
-
-        <label className="block mb-2">Доставка до: {maxDelivery} дней</label>
-        <input
-          type="range"
-          min="1"
-          max="10"
-          value={maxDelivery}
-          onChange={(e) => setMaxDelivery(Number(e.target.value))}
-          className="w-full"
-        />
-
-        <button onClick={() => setShowFilters(false)} className="mt-4 md:hidden w-full border py-2 rounded">
-          Закрыть
-        </button>
-      </div>
-
-      {/* Overlay */}
-      {showFilters && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 z-10 md:hidden" onClick={() => setShowFilters(false)} />
-      )}
-
-      {/* Main */}
-      <div className="flex-1 p-4 md:p-6 overflow-auto">
-        <h1 className="hidden md:block text-2xl font-bold mb-4">ПОДБОРКИН</h1>
-
-        <input
-          type="text"
-          placeholder="Введите категорию (телефоны, ноутбуки...)"
-          value={query}
-          onChange={(e) => setQuery(e.target.value.toLowerCase())}
-          className="border p-2 mb-4 md:mb-6 w-full rounded"
-        />
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-          {filtered.map((item) => (
-            <div key={item.id} className="border rounded-2xl p-3 md:p-4 shadow-sm md:shadow">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="mb-2 w-full h-32 md:h-40 object-cover rounded"
-              />
-              <h3 className="font-semibold text-sm md:text-base">{item.name}</h3>
-              <p className="text-sm md:text-base">{item.price} ₽</p>
-              <p className="text-xs md:text-sm text-gray-500">Доставка: {item.delivery} дней</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+p>${i.price} ₽</p>
+        <small>${i.delivery} дней</small>
+      `;
+      productsDiv.appendChild(el);
+    });
 }
+
+search.value = "телефоны";
+search.oninput = render;
+price.oninput = () => {
+  document.getElementById("priceVal").innerText = price.value;
+  render();
+};
+delivery.oninput = () => {
+  document.getElementById("deliveryVal").innerText = delivery.value;
+  render();
+};
+
+render();
+</script>
+
+</body>
+</html>
