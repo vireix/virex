@@ -1,158 +1,216 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>ПОДБОРКИН</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>ПОДБОРКИН</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      display: flex;
-      flex-direction: column;
-    }
+<style>
+:root { --main:#6c5ce7; --bg:#f5f6fa; }
+body { margin:0;font-family:-apple-system;background:var(--bg); }
+header { background:#fff;padding:15px;display:flex;gap:10px;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+h1 {margin:0;color:var(--main);}
+.search {flex:1;padding:10px;border-radius:10px;border:1px solid #ddd;}
 
-    header {
-      padding: 15px;
-      border-bottom: 1px solid #ddd;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.categories {display:flex;flex-wrap:wrap;gap:8px;padding:10px;}
+.categories button {padding:8px 12px;border:none;border-radius:20px;background:#fff;cursor:pointer;}
+.categories .active {background:var(--main);color:#fff;}
 
-    .container {
-      display: flex;
-    }
+.container {display:flex;}
+.sidebar {width:240px;padding:15px;}
+.box {background:#fff;padding:15px;border-radius:12px;margin-bottom:10px;}
+.content {flex:1;padding:15px;}
+.grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
 
-    .sidebar {
-      width: 250px;
-      padding: 15px;
-      border-right: 1px solid #ddd;
-    }
+.card {background:#fff;padding:10px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,.05);}
+.card img {width:100%;height:140px;object-fit:cover;border-radius:8px;}
+.price {font-weight:bold;}
 
-    .content {
-      flex: 1;
-      padding: 15px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
-    }
-
-    .card {
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 10px;
-    }
-
-    img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-    max-width: 768px {
-      .container {
-        flex-direction: column;
-      }
-      .sidebar {
-        width: 100%;
-      }
-    }
-  </style>
+max-width:768px{
+.container{flex-direction:column}
+.sidebar{width:100%}
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h2>ПОДБОРКИН</h2>
-  <input id="search" placeholder="Введите категорию..." />
+<h1>ПОДБОРКИН</h1>
+<input id="search" class="search" placeholder="Поиск категории">
 </header>
+
+<div id="cats" class="categories"></div>
 
 <div class="container">
 
-  <div class="sidebar">
-    <p>Макс. цена: <span id="priceVal">200000</span></p>
-    <input type="range" id="price" min="1000" max="200000" value="200000">
+<div class="sidebar">
+<div class="box">
+Цена до: <b id="priceVal">200000</b>
 
-    <p>Доставка до: <span id="deliveryVal">10</span> дней</p>
-    <input type="range" id="delivery" min="1" max="10" value="10">
-  </div>
+<input type="range" id="price" min="1000" max="200000" value="200000">
+</div>
 
-  <div class="content">
-    <div id="products" class="grid"></div>
-  </div>
+<div class="box">
+Доставка до: <b id="deliveryVal">10</b>
+
+<input type="range" id="delivery" min="1" max="10" value="10">
+</div>
+</div>
+
+<div class="content">
+<div id="products" class="grid"></div>
+</div>
 
 </div>
 
 <script>
-const data = {
-  "телефоны": [
-    {name:"iPhone 15 Pro",price:120000,delivery:2,img:"https://source.unsplash.com/300x300/?iphone"},
-    {name:"Samsung Galaxy S24",price:95000,delivery:3,img:"https://source.unsplash.com/300x300/?samsung-phone"},
-    {name:"Google Pixel 8",price:85000,delivery:4,img:"https://source.unsplash.com/300x300/?pixel-phone"},
-    {name:"Xiaomi 13 Pro",price:70000,delivery:4,img:"https://source.unsplash.com/300x300/?xiaomi-phone"},
-    {name:"OnePlus 11",price:75000,delivery:5,img:"https://source.unsplash.com/300x300/?oneplus"},
-    {name:"iPhone 14",price:90000,delivery:3,img:"https://source.unsplash.com/300x300/?iphone14"},
-    {name:"Samsung A54",price:45000,delivery:4,img:"https://source.unsplash.com/300x300/?android-phone"},
-    {name:"Huawei P60",price:80000,delivery:5,img:"https://source.unsplash.com/300x300/?huawei"}
-  ],
+const img = (q)=>`https://images.unsplash.com/photo-1?auto=format&fit=crop&w=400&q=80&${q}`;
 
-  "ноутбуки": [
-    {name:"MacBook Air M2",price:130000,delivery:2,img:"https://source.unsplash.com/300x300/?macbook"},
-    {name:"MacBook Pro 14",price:180000,delivery:3,img:"https://source.unsplash.com/300x300/?macbook-pro"},
-    {name:"Dell XPS 13",price:115000,delivery:3,img:"https://source.unsplash.com/300x300/?dell-laptop"},
-    {name:"ASUS ROG G14",price:150000,delivery:5,img:"https://source.unsplash.com/300x300/?gaming-laptop"},
-    {name:"ThinkPad X1",price:140000,delivery:4,img:"https://source.unsplash.com/300x300/?thinkpad"},
-    {name:"HP Spectre",price:125000,delivery:4,img:"https://source.unsplash.com/300x300/?hp-laptop"},
-    {name:"Acer Swift 3",price:80000,delivery:5,img:"https://source.unsplash.com/300x300/?acer"},
-    {name:"MSI Katana",price:110000,delivery:5,img:"https://source.unsplash.com/300x300/?msi"}
-  ]
+const data = {
+
+телефоны:[
+{name:"iPhone 15 Pro",price:120000,delivery:2,img:img("iphone")},
+{name:"Samsung Galaxy S24",price:95000,delivery:3,img:img("smartphone")},
+{name:"Google Pixel 8",price:85000,delivery:4,img:img("pixel phone")},
+{name:"Xiaomi 13",price:70000,delivery:4,img:img("xiaomi")},
+{name:"OnePlus 11",price:75000,delivery:5,img:img("oneplus")},
+{name:"Huawei P60",price:80000,delivery:5,img:img("huawei phone")}
+],
+
+ноутбуки:[
+{name:"MacBook Air M2",price:130000,delivery:2,img:img("macbook")},
+{name:"Dell XPS 13",price:115000,delivery:3,img:img("laptop")},
+{name:"ThinkPad X1",price:140000,delivery:4,img:img("thinkpad")},
+{name:"ASUS ROG",price:150000,delivery:5,img:img("gaming laptop")},
+{name:"HP Spectre",price:125000,delivery:4,img:img("hp laptop")},
+{name:"Acer Swift",price:80000,delivery:5,img:img("acer laptop")}
+],
+
+наушники:[
+{name:"AirPods Pro 2",price:25000,delivery:2,img:img("airpods")},
+{name:"Sony XM5",price:35000,delivery:3,img:img("sony headphones")},
+{name:"Bose QC45",price:32000,delivery:4,img:img("bose")},
+{name:"JBL 760NC",price:12000,delivery:5,img:img("jbl headphones")},
+{name:"Beats Studio3",price:27000,delivery:4,img:img("beats")},
+{name:"Sennheiser",price:30000,delivery:4,img:img("headphones")}
+],
+
+кроссовки:[
+{name:"Nike Air Force 1",price:12000,delivery:3,img:img("nike shoes")},
+{name:"Adidas Ultraboost",price:15000,delivery:4,img:img("adidas shoes")},
+{name:"New Balance 574",price:11000,delivery:5,img:img("new balance")},
+{name:"Puma RS-X",price:10000,delivery:4,img:img("puma")},
+{name:"Nike Air Max",price:14000,delivery:3,img:img("air max")},
+{name:"Reebok Classic",price:9000,delivery:5,img:img("reebok")}
+],
+
+часы:[
+{name:"Apple Watch 9",price:45000,delivery:2,img:img("apple watch")},
+{name:"Samsung Watch",price:35000,delivery:3,img:img("smartwatch")},
+{name:"Garmin Fenix",price:60000,delivery:4,img:img("garmin")},
+{name:"Huawei Watch",price:30000,delivery:3,img:img("watch")},
+{name:"Fitbit",price:28000,delivery:3,img:img("fitness watch")},
+{name:"Casio G-Shock",price:15000,delivery:5,img:
+
+
+img("gshock")}
+],
+
+планшеты:[
+{name:"iPad Pro",price:90000,delivery:2,img:img("ipad")},
+{name:"iPad Air",price:70000,delivery:3,img:img("tablet")},
+{name:"Galaxy Tab",price:80000,delivery:3,img:img("samsung tablet")},
+{name:"Lenovo Tab",price:35000,delivery:4,img:img("tablet device")},
+{name:"MatePad",price:40000,delivery:4,img:img("huawei tablet")},
+{name:"Surface Go",price:60000,delivery:3,img:img("surface tablet")}
+],
+
+телевизоры:[
+{name:"Samsung QLED",price:80000,delivery:4,img:img("tv")},
+{name:"LG OLED",price:120000,delivery:5,img:img("oled tv")},
+{name:"Sony Bravia",price:110000,delivery:4,img:img("television")},
+{name:"TCL 4K",price:60000,delivery:5,img:img("smart tv")},
+{name:"Hisense",price:70000,delivery:4,img:img("tv screen")},
+{name:"Xiaomi TV",price:50000,delivery:4,img:img("tv")}
+],
+
+приставки:[
+{name:"PlayStation 5",price:60000,delivery:2,img:img("ps5")},
+{name:"Xbox Series X",price:58000,delivery:3,img:img("xbox")},
+{name:"Nintendo Switch",price:35000,delivery:4,img:img("switch")},
+{name:"PS4",price:40000,delivery:5,img:img("playstation")},
+{name:"Xbox S",price:45000,delivery:3,img:img("xbox console")},
+{name:"Switch Lite",price:30000,delivery:5,img:img("handheld console")}
+],
+
+камеры:[
+{name:"Canon EOS R6",price:150000,delivery:3,img:img("canon camera")},
+{name:"Sony A7 III",price:140000,delivery:4,img:img("sony camera")},
+{name:"Nikon Z6",price:130000,delivery:4,img:img("nikon")},
+{name:"Fujifilm X-T5",price:120000,delivery:5,img:img("fujifilm")},
+{name:"GoPro 12",price:50000,delivery:3,img:img("gopro")},
+{name:"DJI Pocket",price:60000,delivery:4,img:img("dji camera")}
+],
+
+колонки:[
+{name:"JBL Charge 5",price:12000,delivery:2,img:img("speaker")},
+{name:"JBL Flip 6",price:9000,delivery:3,img:img("bluetooth speaker")},
+{name:"Sony XB43",price:15000,delivery:4,img:img("sony speaker")},
+{name:"Bose SoundLink",price:18000,delivery:3,img:img("bose speaker")},
+{name:"Marshall Emberton",price:20000,delivery:4,img:img("marshall")},
+{name:"Harman Kardon",price:25000,delivery:5,img:img("harman")}
+],
+
+мышки:[
+{name:"Logitech MX Master 3",price:10000,delivery:2,img:img("mouse")},
+{name:"Razer DeathAdder",price:8000,delivery:3,img:img("gaming mouse")},
+{name:"Logitech G Pro",price:12000,delivery:3,img:img("logitech mouse")},
+{name:"SteelSeries Rival",price:7000,delivery:4,img:img("rgb mouse")},
+{name:"Apple Magic Mouse",price:9000,delivery:3,img:img("apple mouse")},
+{name:"Corsair M65",price:8500,delivery:4,img:img("corsair")}
+],
+
+клавиатуры:[
+{name:"Logitech MX Keys",price:12000,delivery:2,img:img("keyboard")},
+{name:"Keychron K6",price:10000,delivery:3,img:img("mechanical keyboard")},
+{name:"Razer BlackWidow",price:14000,delivery:3,img:img("gaming keyboard")},
+{name:"Corsair K95",price:16000,delivery:4,img:img("rgb keyboard")},
+{name:"Apple Magic Keyboard",price:11000,delivery:3,img:img("apple keyboard")},
+{name:"SteelSeries Apex",price:18000,delivery:4,img:img("keyboard")}
+]
+
 };
 
-const search = document.getElementById("search");
-const price = document.getElementById("price");
-const delivery = document.getElementById("delivery");
-const productsDiv = document.getElementById("products");
+let current="телефоны";
+const pDiv=document.getElementById("products");
+const cats=document.getElementById("cats");
 
-function render() {
-  const category = search.value.toLowerCase();
-  const items = data[category] || [];
+Object.keys(data).forEach(c=>{
+let b=document.createElement("button");
+b.innerText=c;
+b.onclick=()=>{current=c;render();document.querySelectorAll(\"button\").forEach(x=>x.classList.remove(\"active\"));b.classList.add(\"active\")};
+cats.appendChild(b);
+});
+cats.children[0].classList.add("active");
 
-  productsDiv.innerHTML = "";
-
-  items
-    .filter(i => i.price <= price.value && i.delivery <= delivery.value)
-    .forEach(i => {
-      const el = document.createElement("div");
-      el.className = "card";
-      el.innerHTML = `
-        <img src="${i.img}">
-        <h4>${i.name}</h4>
-        <
-
-
-p>${i.price} ₽</p>
-        <small>${i.delivery} дней</small>
-      `;
-      productsDiv.appendChild(el);
-    });
+function render(){
+pDiv.innerHTML="";
+data[current]
+.filter(i=>i.price<=price.value && i.delivery<=delivery.value)
+.forEach(i=>{
+pDiv.innerHTML+=`<div class='card'>
+<img src='${i.img}'>
+<div>${i.name}</div>
+<div class='price'>${i.price} ₽</div>
+<div>${i.delivery} дней</div>
+</div>`;
+});
 }
 
-search.value = "телефоны";
-search.oninput = render;
-price.oninput = () => {
-  document.getElementById("priceVal").innerText = price.value;
-  render();
-};
-delivery.oninput = () => {
-  document.getElementById("deliveryVal").innerText = delivery.value;
-  render();
-};
+search.oninput=e=>{if(data[e.target.value]){current=e.target.value;render()}};
+price.oninput=()=>{priceVal.innerText=price.value;render();}
+delivery.oninput=()=>{deliveryVal.innerText=delivery.value;render();}
 
 render();
 </script>
