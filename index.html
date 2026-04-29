@@ -155,174 +155,107 @@ max-width:768px{
 
 <script>
 let cart=0;
+const img = (id) => `https://picsum.photos/400?random=${id}`;
 
 const data = {
 
 телефоны:[
-{name:"iPhone 15 Pro",price:120000,delivery:2,img:"https://images.unsplash.com/photo-1695048133142-1a20484d2569"},
-{name:"Samsung Galaxy S24",price:95000,delivery:3,img:"https://images.unsplash.com/photo-1610945265064-0e34e5519bbf"},
-{name:"Google Pixel 8",price:85000,delivery:4,img:"https://images.unsplash.com/photo-1598327105666-5b89351aff97"},
-{name:"Xiaomi 13",price:70000,delivery:4,img:"https://images.unsplash.com/photo-1580910051074-3eb694886505"},
-{name:"OnePlus 11",price:75000,delivery:5,img:"https://images.unsplash.com/photo-1610792516307-ea5acd9c3b00"},
-{name:"Huawei P60",price:80000,delivery:5,img:"https://images.unsplash.com/photo-1580913428735-bd3c269d6a82"}
+{name:"iPhone 15 Pro",price:120000,delivery:2,img:img(1)},
+{name:"Samsung Galaxy S24",price:95000,delivery:3,img:img(2)},
+{name:"Google Pixel 8",price:85000,delivery:4,img:img(3)},
+{name:"Xiaomi 13",price:70000,delivery:4,img:img(4)},
+{name:"OnePlus 11",price:75000,delivery:5,img:img(5)},
+{name:"Huawei P60",price:80000,delivery:5,img:img(6)}
 ],
 
 ноутбуки:[
-{name:"MacBook Air",price:130000,delivery:2,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"Dell XPS",price:115000,delivery:3,img:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853"},
-{name:"ThinkPad",price:140000,delivery:4,img:"https://images.unsplash.com/photo-1588872657578-7efd1f1555ed"},
-{name:"ASUS ROG",price:150000,delivery:5,img:"https://images.unsplash.com/photo-1603302576837-37561b2e2302"},
-{name:"HP Spectre",price:125000,delivery:4,img:"https://images.unsplash.com/photo-1511385348-a52b4a160dc2"},
-{name:"Acer Swift",price:80000,delivery:5,img:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853"}
+{name:"MacBook Air",price:130000,delivery:2,img:img(7)},
+{name:"Dell XPS",price:115000,delivery:3,img:img(8)},
+{name:"ThinkPad",price:140000,delivery:4,img:img(9)},
+{name:"ASUS ROG",price:150000,delivery:5,img:img(10)},
+{name:"HP Spectre",price:125000,delivery:4,img:img(11)},
+{name:"Acer Swift",price:80000,delivery:5,img:img(12)}
 ],
 
 наушники:[
-{name:"AirPods Pro",price:25000,delivery:2,img:"https://images.unsplash.com/photo-1588421357574-87938a86fa28"},
-{name:"Sony XM5",price:35000,delivery:3,img:"https://images.unsplash.com/photo-1583394838336-acd977736f90"},
-{name:"Bose QC45",price:32000,delivery:4,img:"https://images.unsplash.com/photo-1546435770-a3e426bf472b"},
-{name:"JBL 760",price:12000,delivery:5,img:"https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb"},
-{name:"Beats",price:27000,delivery:4,img:"https://images.unsplash.com/photo-1518441902117-bb2e6b51e9f0"},
-{name:"Sennheiser",price:30000,delivery:4,img:"https://images.unsplash.com/photo-1585386959984-a4155224a1ad"}
+{name:"AirPods Pro",price:25000,delivery:2,img:img(13)},
+{name:"Sony XM5",price:35000,delivery:3,img:img(14)},
+{name:"Bose QC45",price:32000,delivery:4,img:img(15)},
+{name:"JBL 760",price:12000,delivery:5,img:img(16)},
+{name:"Beats",price:27000,delivery:4,img:img(17)},
+{name:"Sennheiser",price:30000,delivery:4,img:img(18)}
 ],
 
 кроссовки:[
-{name:"Nike Air Force 1",price:12000,delivery:3,img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff"},
-{name:"Adidas Ultraboost",price:15000,delivery:4,img:"https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb"},
-{name:"New Balance 574",price:11000,delivery:5,img:"https://images.unsplash.com/photo-1608231387042-66d1773070a5"},
-{name:"Puma RS-X",price:10000,delivery:4,img:"https://images.unsplash.com/photo-1584735175097-719d848f8449"},
-{name:"Nike Air Max",price:14000,delivery:3,img:"https://images.unsplash.com/photo-1519741497674-611481863552"},
-{name:"Reebok Classic",price:9000,delivery:5,img:"https://images.unsplash.com/photo-1528701800489-20be3c6c2dfd"}
-],
+{name:"Nike Air Force 1",price:12000,delivery:3,img:img(19)},
+{name:"Adidas Ultraboost",price:15000,delivery:4,img:img(20)},
+{name:"New Bal
 
-часы:[
-{name:"Apple Watch",price:45000,delivery:2,img:"https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b"},
-{name:"Samsung Watch",price:35000,delivery:3,img:"https://images.unsplash.com/photo-1518444028785-8bfb74c1c45c"},
-{name:"Garmin",price:60000,delivery:4,img:"https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1"},
-{name:"Huawei Watch",price:30000,delivery:3,img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30"},
-{name:"Fitbit",price:28000,delivery:3,img:"https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b"},
-{name:"Casio G-Shock",price:15000,delivery:5,img:"https://images.unsplash.com/photo-1518546305927-5a555bb7020d"}
-],
 
-планшеты:[
-{name:"iPad Pro",price:90000,delivery:2,img:"https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0"},
-{name:"iPad Air",price:70000,delivery:3,img:"https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04"},
-{name:"Galaxy Tab",price:80000,delivery:3,img:"https://images.unsplash.com/photo-1587614382346-ac9bfa28ad9b"},
-{name:"Lenovo Tab",price:35000,delivery:4,img:"https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0"},
-{name:"MatePad",price:40000,delivery:4,img:"https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04"},
-{name:"Surface",price:60000,delivery:3,img:"https://images.unsplash.com/photo-1587614382346-ac9bfa28ad9b"}
-],
-
-телевизоры:[
-{name:"Samsung QLED",price:80000,delivery:4,img:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1"},
-{name:"LG OLED",price:120000,delivery:5,img:"https://images.unsplash.com/photo-1593784991095-a205069470b6"},
-{name:"Sony Bravia",price:110000,delivery:4,img:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1"},
-{name:"TCL",price:60000,delivery:5,img:"https://images.unsplash.com/photo-1593784991095-a205069470b6"},
-{name:"Hisense",price:70000,delivery:4,img:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1"},
-{name:"Xiaomi TV",price:50000,delivery:4,img:"https://images.unsplash.com/photo-1593784991095-a205069470b6"}
-],
-
-приставки:[
-{name:"PS5",price:60000,delivery:2,img:"https://images.unsplash.com/photo-1606813907291-d86efa9b94db"},
-{name:"Xbox X",price:58000,delivery:3,img:"https://images.unsplash.com/photo-1621259182978-fbf93132d53d"},
-{name:"Switch",price:35000,delivery:4,img:"https://images.unsplash.com/photo-1578303512597-81e6cc155b3e"},
-{name:"PS4",price:40000,delivery:5,img:"https://images.unsplash.com/photo-1606813907291-d86efa9b94db"},
-{name:"Xbox S",price:45000,delivery:3,img:"https://images.unsplash.com/photo-1621259182978-fbf93132d53d"},
-{name:"Switch Lite",price:30000,delivery:5,img:"https://images.unsplash.com/photo-1578303512597-81e6cc155b3e"}
-],
-
-камеры:[
-{name:"Canon R6",price:150000,delivery:3,img:"https://images.unsplash.com/photo-1519183071298-a2962ae0b2e4"},
-{name:"Sony A7",price:140000,delivery:4,img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32"},
-{name:"Nikon Z6",price:130000,delivery:4,img:"https://images.unsplash.com/photo-1519183071298-a2962ae0b2e4"},
-{name:"Fujifilm",price:120000,delivery:5,img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32"},
-{name:"GoPro",price:50000,delivery:3,img:"https://images.unsplash.com/photo-1508896694512-1eade558679c"},
-{name:"DJI",price:60000,delivery:4,img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32"}
-],
-
-колонки:[
-{name:"JBL Charge",price:12000,delivery:2,img:"https://images.unsplash.com/photo-1589003077984-894e133dabab"},
-{name:"JBL Flip",price:9000,delivery:3,img:"https://images.unsplash.com/photo-1589003077984-894e133dabab"},
-{name:"Sony XB",price:15000,delivery:4,img:"https://images.unsplash.com/photo-1545454675-3531b543be5d"},
-{name:"Bose",price:18000,delivery:3,img:"https://images.unsplash.com/photo-1545454675-3531b543be5d"},
-{name:"Marshall",price:20000,delivery:4,img:"https://images.unsplash.com/photo-1545454675-3531b543be5d"},
-{name:"Harman",price:25000,delivery:5,img:"https://images.unsplash.com/photo-1589003077984-894e133dabab"}
-],
-
-мышки:[
-{name:"Logitech MX",price:10000,delivery:2,img:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"},
-{name:"Razer",price:8000,delivery:3,img:"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7"},
-{name:"Logitech G",price:12000,delivery:3,img:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"},
-{name:"SteelSeries",price:7000,delivery:4,img:"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7"},
-{name:"Magic Mouse",price:9000,delivery:3,img:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"},
-{name:"Corsair",price:8500,delivery:4,img:"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7"}
-],
-
-клавиатуры:[
-{name:"Logitech MX Keys",price:12000,delivery:2,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"Keychron",price:10000,delivery:3,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"Razer",price:14000,delivery:3,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"Corsair",price:16000,delivery:4,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"Magic Keyboard",price:11000,delivery:3,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"SteelSeries",price:18000,delivery:4,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"}
+ance 574",price:11000,delivery:5,img:img(21)},
+{name:"Puma RS-X",price:10000,delivery:4,img:img(22)},
+{name:"Nike Air Max",price:14000,delivery:3,img:img(23)},
+{name:"Reebok Classic",price:9000,delivery:5,img:img(24)}
 ],
 
 одежда:[
-{name:"Nike Hoodie",price:8000,delivery:3,img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"},
-{name:"Adidas T-Shirt",price:4000,delivery:2,img:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c"},
-{name:"Levis Jeans",price:9000,delivery:4,img:"https://images.unsplash.com/photo-1582552938357-32b906df40cb"},
-{name:"Zara Jacket",price:12000,delivery:5,img:"https://images.unsplash.com/photo-1520975916090-3105956dac38"},
-{name:"Uniqlo Coat",price:15000,delivery:4,img:"https://images.unsplash.com/photo-1539533018447-63fcce2678e3"},
-{name:"H&M Sweater",price:6000,delivery:3,img:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f"}
+{name:"Nike Hoodie",price:8000,delivery:3,img:img(25)},
+{name:"Adidas T-Shirt",price:4000,delivery:2,img:img(26)},
+{name:"Levis Jeans",price:9000,delivery:4,img:img(27)},
+{name:"Zara Jacket",price:12000,delivery:5,img:img(28)},
+{name:"Uniqlo Coat",price:15000,delivery:4,img:img(29)},
+{name:"H&M Sweater",price:6000,delivery:3,img:img(30)}
 ],
 
 рюкзаки:[
-{name:"Herschel",price:7000,delivery:3,img:"https://images.unsplash.com/photo-1509762774605-f07235a08f1f"},
-{name:"Nike Backpack",price:5000,delivery:2,img:"https://images.unsplash.com/photo-1514474959185-1472d4c4e0d4"},
-{name:"Adidas Bag",price:4500,delivery:3,img:"https://images.unsplash.com/photo-1593030761757-71fae45fa0e7"},
-{name:"Samsonite",price:12000,delivery:5,img:"https://images.unsplash.com/photo-1526178610954-1c9f0c9b0c3b"},
-{name:"Xiaomi Urban",price:4000,delivery:4,img:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f"},
-{name:"Puma Backpack",price:4800,delivery:3,img:"https://images.unsplash.com/photo-1509762774605-f07235a08f1f"}
+{name:"Herschel Backpack",price:7000,delivery:3,img:img(31)},
+{name:"Nike Backpack",price:5000,delivery:2,img:img(32)},
+{name:"Adidas Bag",price:4500,delivery:3,img:img(33)},
+{name:"Samsonite Travel",price:12000,delivery:5,img:img(34)},
+{name:"Xiaomi Urban",price:4000,delivery:4,img:img(35)},
+{name:"Puma Backpack",price:4800,delivery:3,img:img(36)}
 ],
 
 очки:[
-{name:"Ray-Ban",price:12000,delivery:3,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
-{name:"Oakley",price:15000,delivery:4,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
-{name:"Gucci",price:20000,delivery:5,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
-{name:"Prada",price:18000,delivery:4,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
-{name:"Polaroid",price:6000,delivery:3,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
-{name:"Carrera",price:9000,delivery:4,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"}
+{name:"Ray-Ban Aviator",price:12000,delivery:3,img:img(37)},
+{name:"Oakley Sport",price:15000,delivery:4,img:img(38)},
+{name:"Gucci Sunglasses",price:20000,delivery:5,img:img(39)},
+{name:"Prada Glasses",price:18000,delivery:4,img:img(40)},
+{name:"Polaroid Classic",price:6000,delivery:3,img:img(41)},
+{name:"Carrera Sport",price:9000,delivery:4,img:img(42)}
 ],
 
 игры:[
-{name:"FIFA 24",price:5000,delivery:2,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
-{name:"Call of Duty",price:6000,delivery:3,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
-{name:"GTA V",price:4000,delivery:2,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
-{name:"Cyberpunk",price:5500,delivery:3,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
-{name:"Minecraft",price:3000,delivery:1,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
-{name:"Fortnite",price:2500,delivery:1,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"}
+{name:"FIFA 24",price:5000,delivery:2,img:img(43)},
+{name:"Call of Duty",price:6000,delivery:3,img:img(44)},
+{name:"GTA V",price:4000,delivery:2,img:img(45)},
+{name:"Cyberpunk 2077",price:5500,delivery:3,img:img(46)},
+{name:"Minecraft",price:3000,delivery:1,img:img(47)},
+{name:"Fortnite Pack",price:2500,delivery:1,img:img(48)}
 ],
 
 книги:[
-{name:"Гарри Поттер",price:2000,delivery:2,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
-{name:"1984",price:1500,delivery:2,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
-{name:"Дюна",price:2200,delivery:3,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
-{name:"Властелин колец",price:3000,delivery:4,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
-{name:"Богатый папа",price:1800,delivery:2,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
-{name:"Атлант",price:2500,delivery:3,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"}
+{name:"Гарри Поттер",price:2000,delivery:2,img:img(49)},
+{name:"1984",price:1500,delivery:2,img:img(50)},
+{name:"Дюна",price:2200,delivery:3,img:img(51)},
+{name:"Властелин колец",price:3000,delivery:4,img:img(52)},
+{name:"Богатый папа",price:1800,delivery:2,img:img(53)},
+{name:"Атлант",price:2500,delivery:3,img:img(54)}
 ],
 
-мебель:[
-{name:"Chair",price:7000,delivery:5,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
-{name:"Desk",price:15000,delivery:6,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
-{name:"Sofa",price:40000,delivery:7,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
-{name:"Wardrobe",price:30000,delivery:6,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
-{name:"Bed",price:25000,delivery:7,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
-{name:"Bookshelf",price:12000,delivery:5,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"}
+аксессуары:[
+{name:"Apple Case",price:3000,delivery:2,img:img(55)},
+{name:"Watch Strap",price:2000,delivery:3,img:img(56)},
+{name:"Laptop Sleeve",price:2500,delivery:3,img:img(57)},
+{name:"Phone Stand",price:1500,delivery:2,img:img(58)},
+{name:"Cable Organizer",price:1200,delivery:2,img:img(59)},
+{name:"Wireless Charger",price:3500,delivery:3,img:img(60)}
 ]
 
 };
 
 let current="телефоны";
+
 const pDiv=document.getElementById("products");
 const cats=document.getElementById("cats");
 
