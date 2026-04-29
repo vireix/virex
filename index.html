@@ -6,14 +6,107 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {margin:0;font-family:Arial}
-header {padding:15px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between}
-.container {display:flex}
-.sidebar {width:250px;padding:15px;border-right:1px solid #ddd}
-.content {flex:1;padding:15px}
-.grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.card {border:1px solid #ddd;border-radius:10px;padding:10px}
-img {width:100%;height:120px;object-fit:cover;border-radius:8px}
+:root { --main:#6c5ce7; --bg:#f5f6fa; }
+
+body {margin:0;font-family:-apple-system;background:var(--bg);}
+
+header {
+  background:#fff;
+  padding:15px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+
+.logo {display:flex;align-items:center;gap:15px;}
+
+.cart {
+  background:#fff;
+  padding:6px 12px;
+  border-radius:20px;
+  cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
+
+.searchBox {position:relative;flex:1;max-width:400px;}
+
+.searchBox input {
+  width:100%;
+  padding:10px 10px 10px 35px;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+.icon {
+  position:absolute;
+  left:10px;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+.categories {display:flex;flex-wrap:wrap;gap:8px;padding:10px;}
+
+.categories button {
+  padding:8px 12px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  background:#fff;
+}
+
+.categories .active {background:var(--main);color:#fff;}
+
+.container {display:flex;}
+
+.sidebar {width:230px;padding:15px;}
+
+.box {
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+.content {flex:1;padding:15px;}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:12px;
+}
+
+.card {
+  background:#fff;
+  padding:10px;
+  border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,.05);
+  transition:.2s;
+}
+
+.card:hover {transform:translateY(-5px);}
+
+.card img {
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.price {font-weight:bold;}
+
+.card button {
+  margin-top:5px;
+  width:100%;
+  padding:6px;
+  border:none;
+  border-radius:8px;
+  background:var(--main);
+  color:#fff;
+  cursor:pointer;
+}
 
 max-width:768px{
 .container{flex-direction:column}
@@ -25,18 +118,33 @@ max-width:768px{
 <body>
 
 <header>
-<h2>ПОДБОРКИН</h2>
-<input id="search" placeholder="Введите категорию...">
+  <div class="logo">
+    <h1>ПОДБОРКИН</h1>
+    <div class="cart" onclick="openCart()">🛒 <span id="cartCount">0</span></div>
+  </div>
+
+  <div class="searchBox">
+    <span class="icon">🔍</span>
+    <input id="search" placeholder="Введите категорию">
+  </div>
 </header>
+
+<div id="cats" class="categories"></div>
 
 <div class="container">
 
 <div class="sidebar">
-<p>Цена до: <span id="priceVal">200000</span></p>
-<input type="range" id="price" min="1000" max="200000" value="200000">
+<div class="box">
+Цена до: <b id="priceVal">200000</b>
 
-<p>Доставка до: <span id="deliveryVal">10</span></p>
+<input type="range" id="price" min="1000" max="200000" value="200000">
+</div>
+
+<div class="box">
+Доставка до: <b id="deliveryVal">10</b>
+
 <input type="range" id="delivery" min="1" max="10" value="10">
+</div>
 </div>
 
 <div class="content">
@@ -46,142 +154,223 @@ max-width:768px{
 </div>
 
 <script>
+let cart=0;
+
 const data = {
 
-телефоны: [
+телефоны:[
 {name:"iPhone 15 Pro",price:120000,delivery:2,img:"https://images.unsplash.com/photo-1695048133142-1a20484d2569"},
 {name:"Samsung Galaxy S24",price:95000,delivery:3,img:"https://images.unsplash.com/photo-1610945265064-0e34e5519bbf"},
 {name:"Google Pixel 8",price:85000,delivery:4,img:"https://images.unsplash.com/photo-1598327105666-5b89351aff97"},
-{name:"Xiaomi 13 Pro",price:70000,delivery:4,img:"https://images.unsplash.com/photo-1580910051074-3eb694886505"},
+{name:"Xiaomi 13",price:70000,delivery:4,img:"https://images.unsplash.com/photo-1580910051074-3eb694886505"},
 {name:"OnePlus 11",price:75000,delivery:5,img:"https://images.unsplash.com/photo-1610792516307-ea5acd9c3b00"},
-{name:"iPhone 14",price:90000,delivery:3,img:"https://images.unsplash.com/photo-1678911820864-e4a3b4a2e77d"}
+{name:"Huawei P60",price:80000,delivery:5,img:"https://images.unsplash.com/photo-1580913428735-bd3c269d6a82"}
 ],
 
-ноутбуки: [
-{name:"MacBook Air M2",price:130000,delivery:2,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"MacBook Pro 14",price:180000,delivery:3,img:"https://images.unsplash.com/photo-1518779578993-ec3579fee39f"},
-{name:"Dell XPS 13",price:115000,delivery:3,img:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853"},
-{name:"ASUS ROG G14",price:150000,delivery:5,img:"https://images.unsplash.com/photo-1603302576837-37561b2e2302"},
-{name:"ThinkPad X1",price:140000,delivery:4,img:"https://images.unsplash.com/photo-1588872657578-7efd1f1555ed"},
-{name:"HP Spectre",price:125000,delivery:4,img:"https://images.unsplash.com/photo-1511385348-a52b4a160dc2"}
+ноутбуки:[
+{name:"MacBook Air",price:130000,delivery:2,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
+{name:"Dell XPS",price:115000,delivery:3,img:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853"},
+{name:"ThinkPad",price:140000,delivery:4,img:"https://images.unsplash.com/photo-1588872657578-7efd1f1555ed"},
+{name:"ASUS ROG",price:150000,delivery:5,img:"https://images.unsplash.com/photo-1603302576837-37561b2e2302"},
+{name:"HP Spectre",price:125000,delivery:4,img:"https://images.unsplash.com/photo-1511385348-a52b4a160dc2"},
+{name:"Acer Swift",price:80000,delivery:5,img:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853"}
 ],
 
-наушники: [
-{name:"AirPods Pro 2",price:25000,delivery:2,img:"https://images.unsplash.com/photo-1588421357574-87938a86fa28"},
-{name:"Sony WH-1000XM5",price:35000,delivery:3,img:"https://images.unsplash.com/photo-1583394838336-acd977736f90"},
+наушники:[
+{name:"AirPods Pro",price:25000,delivery:2,img:"https://images.unsplash.com/photo-1588421357574-87938a86fa28"},
+{name:"Sony XM5",price:35000,delivery:3,img:"https://images.unsplash.com/photo-1583394838336-acd977736f90"},
 {name:"Bose QC45",price:32000,delivery:4,img:"https://images.unsplash.com/photo-1546435770-a3e426bf472b"},
-{name:"JBL Tune 760NC",price:12000,delivery:5,img:"https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb"},
-{name:"Beats Studio3",price:27000,delivery:4,img:"https://images.unsplash.com/photo-1518441902117-bb2e6b51e9f0"},
-{name:"Sennheiser Momentum 4",price:30000,delivery:4,img:"https://images.unsplash.com/photo-1585386959984-a4155224a1ad"}
+{name:"JBL 760",price:12000,delivery:5,img:"https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb"},
+{name:"Beats",price:27000,delivery:4,img:"https://images.unsplash.com/photo-1518441902117-bb2e6b51e9f0"},
+{name:"Sennheiser",price:30000,delivery:4,img:"https://images.unsplash.com/photo-1585386959984-a4155224a1ad"}
 ],
 
-кроссовки: [
+кроссовки:[
 {name:"Nike Air Force 1",price:12000,delivery:3,img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff"},
 {name:"Adidas Ultraboost",price:15000,delivery:4,img:"https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb"},
 {name:"New Balance 574",price:11000,delivery:5,img:"https://images.unsplash.com/photo-1608231387042-66d1773070a5"},
 {name:"Puma RS-X",price:10000,delivery:4,img:"https://images.unsplash.com/photo-1584735175097-719d848f8449"},
-{name:"Nike Air Max 270",price:14000,delivery:3,img:"https://images.unsplash.com/photo-1519741497674-611481863552"},
+{name:"Nike Air Max",price:14000,delivery:3,img:"https://images.unsplash.com/photo-1519741497674-611481863552"},
 {name:"Reebok Classic",price:9000,delivery:5,img:"https://images.unsplash.com/photo-1528701800489-20be3c6c2dfd"}
 ],
 
-часы: [
-{name:"Apple Watch Series 9",price:45000,delivery:2,img:"https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b"},
-{name:"Samsung Watch 6",price:35000,delivery:3,img:"https://images.unsplash.com/photo-1518444028785-8bfb74c1c45c"},
-{name:"Garmin Fenix 7",price:60000,delivery:4,img:"https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1"},
-{name:"Huawei Watch GT 4",price:30000,delivery:3,img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30"},
-{name:"Fitbit Sense 2",price:28000,delivery:3,img:"https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b"},
+часы:[
+{name:"Apple Watch",price:45000,delivery:2,img:"https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b"},
+{name:"Samsung Watch",price:35000,delivery:3,img:"https://images.unsplash.com/photo-1518444028785-8bfb74c1c45c"},
+{name:"Garmin",price:60000,delivery:4,img:"https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1"},
+{name:"Huawei Watch",price:30000,delivery:3,img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30"},
+{name:"Fitbit",price:28000,delivery:3,img:"https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b"},
 {name:"Casio G-Shock",price:15000,delivery:5,img:"https://images.unsplash.com/photo-1518546305927-5a555bb7020d"}
 ],
 
-планшеты: [
+планшеты:[
 {name:"iPad Pro",price:90000,delivery:2,img:"https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0"},
 {name:"iPad Air",price:70000,delivery:3,img:"https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04"},
-{name:"Samsung Tab S9",price:80000,delivery:3,img:"https://images.unsplash.com/photo-1587614382346-ac9bfa28ad9b"},
-{name:"Lenovo Tab P11",price:35000,delivery:4,img:"https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0"},
-{name:"Huawei MatePad",price:40000,delivery:4,img:"https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04"},
-{name:"Surface Go",price:60000,delivery:3,img:"https://images.unsplash.com/photo-1587614382346-ac9bfa28ad9b"}
+{name:"Galaxy Tab",price:80000,delivery:3,img:"https://images.unsplash.com/photo-1587614382346-ac9bfa28ad9b"},
+{name:"Lenovo Tab",price:35000,delivery:4,img:"https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0"},
+{name:"MatePad",price:40000,delivery:4,img:"https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04"},
+{name:"Surface",price:60000,delivery:3,img:"https://images.unsplash.com/photo-1587614382346-ac9bfa28ad9b"}
 ],
 
-телевизоры: [
+телевизоры:[
 {name:"Samsung QLED",price:80000,delivery:4,img:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1"},
 {name:"LG OLED",price:120000,delivery:5,img:"https://images.unsplash.com/photo-1593784991095-a205069470b6"},
 {name:"Sony Bravia",price:110000,delivery:4,img:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1"},
-{name:"TCL 4K TV",price:60000,delivery:5,img:"https://images.unsplash.com/photo-1593784991095-a205069470b6"},
-{name:"Hisense TV",price:70000,delivery:4,img:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1"},
+{name:"TCL",price:60000,delivery:5,img:"https://images.unsplash.com/photo-1593784991095-a205069470b6"},
+{name:"Hisense",price:70000,delivery:4,img:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1"},
 {name:"Xiaomi TV",price:50000,delivery:4,img:"https://images.unsplash.com/photo-1593784991095-a205069470b6"}
 ],
 
-приставки: [
-{name:"PlayStation 5",price:60000,delivery:2,img:"https://images.unsplash.com/photo-1606813907291-d86efa9b94db"},
-{name:"Xbox Series X",price:58000,delivery:3,img:"https://images.unsplash.com/photo-1621259182978-fbf93132d53d"},
-{name:"Nintendo Switch",price:35000,delivery:4,img:"https://images.unsplash.com/photo-1578303512597-81e6cc155b3e"},
-{name:"Xbox Series S",price:45000,delivery:3,img:"https://images.unsplash.com/photo-1621259182978-fbf93132d53d"},
+приставки:[
+{name:"PS5",price:60000,delivery:2,img:"https://images.unsplash.com/photo-1606813907291-d86efa9b94db"},
+{name:"Xbox X",price:58000,delivery:3,img:"https://images.unsplash.com/photo-1621259182978-fbf93132d53d"},
+{name:"Switch",price:35000,delivery:4,img:"https://images.unsplash.com/photo-1578303512597-81e6cc155b3e"},
 {name:"PS4",price:40000,delivery:5,img:"https://images.unsplash.com/photo-1606813907291-d86efa9b94db"},
+{name:"Xbox S",price:45000,delivery:3,img:"https://images.unsplash.com/photo-1621259182978-fbf93132d53d"},
 {name:"Switch Lite",price:30000,delivery:5,img:"https://images.unsplash.com/photo-1578303512597-81e6cc155b3e"}
 ],
 
-камеры: [
-{name:"Canon EOS R6",price:150000,delivery:3,img:"https://images.unsplash.com/photo-1519183071298-a2962ae0b2e4"},
-{name:"Sony A7 III",price:140000,delivery:4,img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32"},
+камеры:[
+{name:"Canon R6",price:150000,delivery:3,img:"https://images.unsplash.com/photo-1519183071298-a2962ae0b2e4"},
+{name:"Sony A7",price:140000,delivery:4,img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32"},
 {name:"Nikon Z6",price:130000,delivery:4,img:"https://images.unsplash.com/photo-1519183071298-a2962ae0b2e4"},
-{name:"Fujifilm X-T5",price:120000,delivery:5,img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32"},
-{name:"GoPro Hero 12",price:50000,delivery:3,img:"https://images.unsplash.com/photo-1508896694512-1eade558679c"},
-{name:"DJI Pocket 3",price:60000,delivery:4,img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32"}
+{name:"Fujifilm",price:120000,delivery:5,img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32"},
+{name:"GoPro",price:50000,delivery:3,img:"https://images.unsplash.com/photo-1508896694512-1eade558679c"},
+{name:"DJI",price:60000,delivery:4,img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32"}
 ],
 
-колонки: [
-{name:"JBL Charge 5",price:12000,delivery:2,img:"https://images.unsplash.com/photo-1589003077984-894e133dabab"},
-{name:"JBL Flip 6",price:9000,delivery:3,img:"https://images.unsplash.com/photo-1589003077984-894e133dabab"},
-{name:"Sony XB43",price:15000,delivery:4,img:"https://images.unsplash.com/photo-1545454675-3531b543be5d"},
-{name:"Bose SoundLink",price:18000,delivery:3,img:"https://images.unsplash.com/photo-1545454675-3531b543be5d"},
-{name:"Marshall Emberton",price:20000,delivery:4,img:"https://images.unsplash.com/photo-1545454675-3531b543be5d"},
-{name:"Harman Kardon",price:25000,delivery:5,img:"https://images.unsplash.com/photo-1589003077984-894e133dabab"}
+колонки:[
+{name:"JBL Charge",price:12000,delivery:2,img:"https://images.unsplash.com/photo-1589003077984-894e133dabab"},
+{name:"JBL Flip",price:9000,delivery:3,img:"https://images.unsplash.com/photo-1589003077984-894e133dabab"},
+{name:"Sony XB",price:15000,delivery:4,img:"https://images.unsplash.com/photo-1545454675-3531b543be5d"},
+{name:"Bose",price:18000,delivery:3,img:"https://images.unsplash.com/photo-1545454675-3531b543be5d"},
+{name:"Marshall",price:20000,delivery:4,img:"https://images.unsplash.com/photo-1545454675-3531b543be5d"},
+{name:"Harman",price:25000,delivery:5,img:"https://images.unsplash.com/photo-1589003077984-894e133dabab"}
 ],
 
-мышки: [
-{name:"Logitech MX Master 3",price:10000,delivery:2,img:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"},
-{name:"Razer DeathAdder",price:8000,delivery:3,img:"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7"},
-{name:"Logitech G Pro",price:12000,delivery:3,img:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"},
-{name:"SteelSeries Rival",price:7000,delivery:4,img:"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7"},
-{name:"Apple Magic Mouse",price:9000,delivery:3,img:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"},
-{name:"Corsair M65",price:8500,delivery:4,img:"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7"}
+мышки:[
+{name:"Logitech MX",price:10000,delivery:2,img:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"},
+{name:"Razer",price:8000,delivery:3,img:"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7"},
+{name:"Logitech G",price:12000,delivery:3,img:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"},
+{name:"SteelSeries",price:7000,delivery:4,img:"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7"},
+{name:"Magic Mouse",price:9000,delivery:3,img:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"},
+{name:"Corsair",price:8500,delivery:4,img:"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7"}
 ],
 
-клавиатуры: [
+клавиатуры:[
 {name:"Logitech MX Keys",price:12000,delivery:2,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"Keychron K6",price:10000,delivery:3,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"Razer BlackWidow",price:14000,delivery:3,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"Corsair K95",price:16000,delivery:4,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"Apple Magic Keyboard",price:11000,delivery:3,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
-{name:"SteelSeries Apex Pro",price:18000,delivery:4,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"}
+{name:"Keychron",price:10000,delivery:3,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
+{name:"Razer",price:14000,delivery:3,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
+{name:"Corsair",price:16000,delivery:4,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
+{name:"Magic Keyboard",price:11000,delivery:3,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"},
+{name:"SteelSeries",price:18000,delivery:4,img:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8"}
+],
+
+одежда:[
+{name:"Nike Hoodie",price:8000,delivery:3,img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"},
+{name:"Adidas T-Shirt",price:4000,delivery:2,img:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c"},
+{name:"Levis Jeans",price:9000,delivery:4,img:"https://images.unsplash.com/photo-1582552938357-32b906df40cb"},
+{name:"Zara Jacket",price:12000,delivery:5,img:"https://images.unsplash.com/photo-1520975916090-3105956dac38"},
+{name:"Uniqlo Coat",price:15000,delivery:4,img:"https://images.unsplash.com/photo-1539533018447-63fcce2678e3"},
+{name:"H&M Sweater",price:6000,delivery:3,img:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f"}
+],
+
+рюкзаки:[
+{name:"Herschel",price:7000,delivery:3,img:"https://images.unsplash.com/photo-1509762774605-f07235a08f1f"},
+{name:"Nike Backpack",price:5000,delivery:2,img:"https://images.unsplash.com/photo-1514474959185-1472d4c4e0d4"},
+{name:"Adidas Bag",price:4500,delivery:3,img:"https://images.unsplash.com/photo-1593030761757-71fae45fa0e7"},
+{name:"Samsonite",price:12000,delivery:5,img:"https://images.unsplash.com/photo-1526178610954-1c9f0c9b0c3b"},
+{name:"Xiaomi Urban",price:4000,delivery:4,img:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f"},
+{name:"Puma Backpack",price:4800,delivery:3,img:"https://images.unsplash.com/photo-1509762774605-f07235a08f1f"}
+],
+
+очки:[
+{name:"Ray-Ban",price:12000,delivery:3,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
+{name:"Oakley",price:15000,delivery:4,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
+{name:"Gucci",price:20000,delivery:5,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
+{name:"Prada",price:18000,delivery:4,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
+{name:"Polaroid",price:6000,delivery:3,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
+{name:"Carrera",price:9000,delivery:4,img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"}
+],
+
+игры:[
+{name:"FIFA 24",price:5000,delivery:2,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
+{name:"Call of Duty",price:6000,delivery:3,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
+{name:"GTA V",price:4000,delivery:2,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
+{name:"Cyberpunk",price:5500,delivery:3,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
+{name:"Minecraft",price:3000,delivery:1,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"},
+{name:"Fortnite",price:2500,delivery:1,img:"https://images.unsplash.com/photo-1511512578047-dfb367046420"}
+],
+
+книги:[
+{name:"Гарри Поттер",price:2000,delivery:2,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
+{name:"1984",price:1500,delivery:2,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
+{name:"Дюна",price:2200,delivery:3,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
+{name:"Властелин колец",price:3000,delivery:4,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
+{name:"Богатый папа",price:1800,delivery:2,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"},
+{name:"Атлант",price:2500,delivery:3,img:"https://images.unsplash.com/photo-1512820790803-83ca734da794"}
+],
+
+мебель:[
+{name:"Chair",price:7000,delivery:5,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
+{name:"Desk",price:15000,delivery:6,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
+{name:"Sofa",price:40000,delivery:7,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
+{name:"Wardrobe",price:30000,delivery:6,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
+{name:"Bed",price:25000,delivery:7,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"},
+{name:"Bookshelf",price:12000,delivery:5,img:"https://images.unsplash.com/photo-1582582494700-3c1e9a8b4c7d"}
 ]
 
 };
 
-const search = document.getElementById("search");
-const price = document.getElementById("price");
-const delivery = document.getElementById("delivery");
-const productsDiv = document.getElementById("products");
+let current="телефоны";
+const pDiv=document.getElementById("products");
+const cats=document.getElementById("cats");
+
+Object.keys(data).forEach(c=>{
+let b=document.createElement("button");
+b.innerText=c;
+b.onclick=()=>{
+current=c;
+render();
+document.querySelectorAll(".categories button").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+};
+cats.appendChild(b);
+});
+cats.children[0].classList.add("active");
 
 function render(){
-const items = data[search.value.toLowerCase()] || [];
-productsDiv.innerHTML="";
-items.filter(i=>i.price<=price.value && i.delivery<=delivery.value)
+pDiv.innerHTML="";
+data[current]
+.filter(i=>i.price<=price.value && i.delivery<=delivery.value)
 .forEach(i=>{
-productsDiv.innerHTML+=`
+pDiv.innerHTML+=`
 <div class="card">
 <img src="${i.img}">
-<h4>${i.name}</h4>
-<p>${i.price} ₽</p>
-<small>${i.delivery} дней</small>
+<div>${i.name}</div>
+<div class="price">${i.price} ₽</div>
+<div>${i.delivery} дней</div>
+<button onclick="add()">В корзину</button>
 </div>`;
 });
 }
 
-search.value="телефоны";
-search.oninput=render;
+function add(){
+cart++;
+document.getElementById("cartCount").innerText=cart;
+}
+
+function openCart(){
+alert("В корзине товаров: "+cart);
+}
+
+search.oninput=e=>{
+if(data[e.target.value]){current=e.target.value;render();}
+};
+
 price.oninput=()=>{priceVal.innerText=price.value;render();}
 delivery.oninput=()=>{deliveryVal.innerText=delivery.value;render();}
+
 render();
 </script>
 
