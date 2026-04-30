@@ -8,7 +8,7 @@
 <style>
 :root { --main:#6c5ce7; --bg:#f5f6fa; }
 
-body {margin:0;font-family:-apple-system;background:var(--bg);}
+body {margin:0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;background:var(--bg);}
 
 header {
   background:#fff;
@@ -29,7 +29,10 @@ header {
   border-radius:20px;
   cursor:pointer;
   box-shadow:0 2px 6px rgba(0,0,0,.1);
+  transition:0.2s;
 }
+
+.cart:hover {transform:scale(1.05);}
 
 .searchBox {position:relative;flex:1;max-width:400px;}
 
@@ -38,6 +41,7 @@ header {
   padding:10px 10px 10px 35px;
   border-radius:10px;
   border:1px solid #ddd;
+  font-size:14px;
 }
 
 .icon {
@@ -55,7 +59,11 @@ header {
   border-radius:20px;
   cursor:pointer;
   background:#fff;
+  transition:0.2s;
+  font-size:14px;
 }
+
+.categories button:hover {transform:scale(1.05);}
 
 .categories .active {background:var(--main);color:#fff;}
 
@@ -68,6 +76,7 @@ header {
   padding:15px;
   border-radius:12px;
   margin-bottom:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
 
 .content {flex:1;padding:15px;}
@@ -95,7 +104,7 @@ header {
   padding: 20px 0;
 }
 
-.price {font-weight:bold;color:var(--main);}
+.price {font-weight:bold;color:var(--main);font-size:18px;}
 
 .card button {
   margin-top:10px;
@@ -106,7 +115,11 @@ header {
   background:var(--main);
   color:#fff;
   cursor:pointer;
+  transition:0.2s;
+  font-size:14px;
 }
+
+.card button:hover {opacity:0.9;transform:scale(1.02);}
 
 @media(max-width:768px){
 .container{flex-direction:column}
@@ -135,12 +148,12 @@ header {
 
 <div class="sidebar">
 <div class="box">
-Цена до: <b id="priceVal">200000</b><br>
-<input type="range" id="price" min="1000" max="200000" value="200000">
+💰 Цена до: <b id="priceVal">200 000</b><br>
+<input type="range" id="price" min="1000" max="200000" value="200000" step="1000">
 </div>
 
 <div class="box">
-Доставка до: <b id="deliveryVal">10</b><br>
+🚚 Доставка до: <b id="deliveryVal">10</b> дней<br>
 <input type="range" id="delivery" min="1" max="10" value="10">
 </div>
 </div>
@@ -153,10 +166,10 @@ header {
 
 <script>
 let cart=0;
-let cartItems = []; // для хранения добавленных товаров
+let cartItems = [];
 
-// Функция для получения смайла по категории и названию товара
-function getEmoji(category, productName) {
+// Функция для получения смайла по категории
+function getEmoji(category) {
   const emojiMap = {
     телефоны: "📱",
     ноутбуки: "💻",
@@ -167,38 +180,8 @@ function getEmoji(category, productName) {
     очки: "👓",
     игры: "🎮",
     книги: "📚",
-    аксессуары: "🔌"
+    аксессуары: "⌚"
   };
-  
-  // Дополнительные специфичные смайлы для некоторых товаров
-  if (productName.includes("iPhone") || productName.includes("Samsung") || productName.includes("Google")) {
-    return "📱";
-  }
-  if (productName.includes("MacBook") || productName.includes("Dell") || productName.includes("ASUS")) {
-    return "💻";
-  }
-  if (productName.includes("AirPods") || productName.includes("Sony") || productName.includes("Bose")) {
-    return "🎧";
-  }
-  if (productName.includes("Nike") || productName.includes("Adidas") || productName.includes("Puma")) {
-    return "👟";
-  }
-  if (productName.includes("Hoodie") || productName.includes("T-Shirt") || productName.includes("Jeans")) {
-    return "👕";
-  }
-  if (productName.includes("Backpack") || productName.includes("Bag")) {
-    return "🎒";
-  }
-  if (productName.includes("Ray-Ban") || productName.includes("Oakley") || productName.includes("Gucci")) {
-    return "👓";
-  }
-  if (productName.includes("FIFA") || productName.includes("Call of Duty") || productName.includes("GTA")) {
-    return "🎮";
-  }
-  if (productName.includes("Гарри") || productName.includes("1984") || productName.includes("Дюна")) {
-    return "📚";
-  }
-  
   return emojiMap[category] || "📦";
 }
 
@@ -302,13 +285,13 @@ const cats=document.getElementById("cats");
 // Создаем кнопки категорий
 Object.keys(data).forEach(c=>{
 let b=document.createElement("button");
-b.innerText=c;
+b.innerText = c.charAt(0).toUpperCase() + c.slice(1);
 b.onclick=()=>{
 current=c;
 render();
 document.querySelectorAll(".categories button").forEach(x=>x.classList.remove("active"));
 b.classList.add("active");
-document.getElementById("search").value = ""; // очищаем поиск при смене категории
+document.getElementById("search").value = "";
 };
 cats.appendChild(b);
 });
@@ -334,7 +317,7 @@ if(filtered.length === 0){
 }
   
 filtered.forEach(item=>{
-const emoji = getEmoji(currentCategory, item.name);
+const emoji = getEmoji(currentCategory);
 const card = document.createElement("div");
 card.className = "card";
 card.innerHTML = `
@@ -348,7 +331,6 @@ pDiv.appendChild(card);
 });
 }
 
-// Функция для правильного склонения слова "день"
 function getDaysWord(days) {
   if (days >= 11 && days <= 19) return "дней";
   const lastDigit = days % 10;
@@ -357,18 +339,21 @@ function getDaysWord(days) {
   return "дней";
 }
 
-// Функция добавления в корзину с подробностями
 function addToCart(name, price, emoji) {
   cart++;
   cartItems.push({name, price, emoji});
   document.getElementById("cartCount").innerText = cart;
   
-  // Визуальная обратная связь
-  const btn = event.target;
-  btn.textContent = "✓ Добавлено!";
-  setTimeout(() => {
-    btn.textContent = "В корзину";
-  }, 800);
+  const btns = document.querySelectorAll(".card button");
+  for(let btn of btns) {
+    if(btn.innerText === "В корзину") {
+      btn.textContent = "✓ Добавлено!";
+      setTimeout(() => {
+        btn.textContent = "В корзину";
+      }, 800);
+      break;
+    }
+  }
 }
 
 function openCart(){
@@ -377,18 +362,17 @@ function openCart(){
     return;
   }
   
-  let message = "🛒 Ваша корзина:\n\n";
+  let message = "🛒 ВАША КОРЗИНА:\n\n";
   let total = 0;
   cartItems.forEach((item, index) => {
-    message += `${index+1}. ${item.emoji} ${item.name} - ${item.price.toLocaleString()} ₽\n`;
+    message += `${index+1}. ${item.emoji} ${item.name}\n   💰 ${item.price.toLocaleString()} ₽\n\n`;
     total += item.price;
   });
-  message += `\n📦 Итого товаров: ${cart}\n💰 Общая сумма: ${total.toLocaleString()} ₽`;
-  message += `\n\n✅ Спасибо за покупку!`;
+  message += `━━━━━━━━━━━━━━━━━━\n📦 Товаров: ${cart}\n💰 Итого: ${total.toLocaleString()} ₽\n━━━━━━━━━━━━━━━━━━\n\n✅ Спасибо за покупку!`;
   alert(message);
 }
 
-// Поиск с авто-обновлением
+// Поиск
 const search = document.getElementById("search");
 search.oninput = () => {
   render();
