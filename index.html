@@ -84,23 +84,23 @@ header {
   border-radius:12px;
   box-shadow:0 5px 15px rgba(0,0,0,.05);
   transition:.2s;
+  text-align:center;
 }
 
 .card:hover {transform:translateY(-5px);}
 
-.card img {
-  width:100%;
-  height:140px;
-  object-fit:cover;
-  border-radius:8px;
+.card .emoji {
+  font-size: 80px;
+  text-align: center;
+  padding: 20px 0;
 }
 
-.price {font-weight:bold;}
+.price {font-weight:bold;color:var(--main);}
 
 .card button {
-  margin-top:5px;
+  margin-top:10px;
   width:100%;
-  padding:6px;
+  padding:8px;
   border:none;
   border-radius:8px;
   background:var(--main);
@@ -125,7 +125,7 @@ header {
 
   <div class="searchBox">
     <span class="icon">🔍</span>
-    <input id="search" placeholder="Введите категорию">
+    <input id="search" placeholder="Поиск по названию">
   </div>
 </header>
 
@@ -153,100 +153,145 @@ header {
 
 <script>
 let cart=0;
-const img = (id) => `https://picsum.photos/400?random=${id}`;
+let cartItems = []; // для хранения добавленных товаров
+
+// Функция для получения смайла по категории и названию товара
+function getEmoji(category, productName) {
+  const emojiMap = {
+    телефоны: "📱",
+    ноутбуки: "💻",
+    наушники: "🎧",
+    кроссовки: "👟",
+    одежда: "👕",
+    рюкзаки: "🎒",
+    очки: "👓",
+    игры: "🎮",
+    книги: "📚",
+    аксессуары: "🔌"
+  };
+  
+  // Дополнительные специфичные смайлы для некоторых товаров
+  if (productName.includes("iPhone") || productName.includes("Samsung") || productName.includes("Google")) {
+    return "📱";
+  }
+  if (productName.includes("MacBook") || productName.includes("Dell") || productName.includes("ASUS")) {
+    return "💻";
+  }
+  if (productName.includes("AirPods") || productName.includes("Sony") || productName.includes("Bose")) {
+    return "🎧";
+  }
+  if (productName.includes("Nike") || productName.includes("Adidas") || productName.includes("Puma")) {
+    return "👟";
+  }
+  if (productName.includes("Hoodie") || productName.includes("T-Shirt") || productName.includes("Jeans")) {
+    return "👕";
+  }
+  if (productName.includes("Backpack") || productName.includes("Bag")) {
+    return "🎒";
+  }
+  if (productName.includes("Ray-Ban") || productName.includes("Oakley") || productName.includes("Gucci")) {
+    return "👓";
+  }
+  if (productName.includes("FIFA") || productName.includes("Call of Duty") || productName.includes("GTA")) {
+    return "🎮";
+  }
+  if (productName.includes("Гарри") || productName.includes("1984") || productName.includes("Дюна")) {
+    return "📚";
+  }
+  
+  return emojiMap[category] || "📦";
+}
 
 const data = {
-
 телефоны:[
-{name:"iPhone 15 Pro",price:120000,delivery:2,img:img(1)},
-{name:"Samsung Galaxy S24",price:95000,delivery:3,img:img(2)},
-{name:"Google Pixel 8",price:85000,delivery:4,img:img(3)},
-{name:"Xiaomi 13",price:70000,delivery:4,img:img(4)},
-{name:"OnePlus 11",price:75000,delivery:5,img:img(5)},
-{name:"Huawei P60",price:80000,delivery:5,img:img(6)}
+{name:"iPhone 15 Pro",price:120000,delivery:2},
+{name:"Samsung Galaxy S24",price:95000,delivery:3},
+{name:"Google Pixel 8",price:85000,delivery:4},
+{name:"Xiaomi 13",price:70000,delivery:4},
+{name:"OnePlus 11",price:75000,delivery:5},
+{name:"Huawei P60",price:80000,delivery:5}
 ],
 
 ноутбуки:[
-{name:"MacBook Air",price:130000,delivery:2,img:img(7)},
-{name:"Dell XPS",price:115000,delivery:3,img:img(8)},
-{name:"ThinkPad",price:140000,delivery:4,img:img(9)},
-{name:"ASUS ROG",price:150000,delivery:5,img:img(10)},
-{name:"HP Spectre",price:125000,delivery:4,img:img(11)},
-{name:"Acer Swift",price:80000,delivery:5,img:img(12)}
+{name:"MacBook Air",price:130000,delivery:2},
+{name:"Dell XPS",price:115000,delivery:3},
+{name:"ThinkPad",price:140000,delivery:4},
+{name:"ASUS ROG",price:150000,delivery:5},
+{name:"HP Spectre",price:125000,delivery:4},
+{name:"Acer Swift",price:80000,delivery:5}
 ],
 
 наушники:[
-{name:"AirPods Pro",price:25000,delivery:2,img:img(13)},
-{name:"Sony XM5",price:35000,delivery:3,img:img(14)},
-{name:"Bose QC45",price:32000,delivery:4,img:img(15)},
-{name:"JBL 760",price:12000,delivery:5,img:img(16)},
-{name:"Beats",price:27000,delivery:4,img:img(17)},
-{name:"Sennheiser",price:30000,delivery:4,img:img(18)}
+{name:"AirPods Pro",price:25000,delivery:2},
+{name:"Sony XM5",price:35000,delivery:3},
+{name:"Bose QC45",price:32000,delivery:4},
+{name:"JBL 760",price:12000,delivery:5},
+{name:"Beats",price:27000,delivery:4},
+{name:"Sennheiser",price:30000,delivery:4}
 ],
 
 кроссовки:[
-{name:"Nike Air Force 1",price:12000,delivery:3,img:img(19)},
-{name:"Adidas Ultraboost",price:15000,delivery:4,img:img(20)},
-{name:"New Balance 574",price:11000,delivery:5,img:img(21)},
-{name:"Puma RS-X",price:10000,delivery:4,img:img(22)},
-{name:"Nike Air Max",price:14000,delivery:3,img:img(23)},
-{name:"Reebok Classic",price:9000,delivery:5,img:img(24)}
+{name:"Nike Air Force 1",price:12000,delivery:3},
+{name:"Adidas Ultraboost",price:15000,delivery:4},
+{name:"New Balance 574",price:11000,delivery:5},
+{name:"Puma RS-X",price:10000,delivery:4},
+{name:"Nike Air Max",price:14000,delivery:3},
+{name:"Reebok Classic",price:9000,delivery:5}
 ],
 
 одежда:[
-{name:"Nike Hoodie",price:8000,delivery:3,img:img(25)},
-{name:"Adidas T-Shirt",price:4000,delivery:2,img:img(26)},
-{name:"Levis Jeans",price:9000,delivery:4,img:img(27)},
-{name:"Zara Jacket",price:12000,delivery:5,img:img(28)},
-{name:"Uniqlo Coat",price:15000,delivery:4,img:img(29)},
-{name:"H&M Sweater",price:6000,delivery:3,img:img(30)}
+{name:"Nike Hoodie",price:8000,delivery:3},
+{name:"Adidas T-Shirt",price:4000,delivery:2},
+{name:"Levis Jeans",price:9000,delivery:4},
+{name:"Zara Jacket",price:12000,delivery:5},
+{name:"Uniqlo Coat",price:15000,delivery:4},
+{name:"H&M Sweater",price:6000,delivery:3}
 ],
 
 рюкзаки:[
-{name:"Herschel Backpack",price:7000,delivery:3,img:img(31)},
-{name:"Nike Backpack",price:5000,delivery:2,img:img(32)},
-{name:"Adidas Bag",price:4500,delivery:3,img:img(33)},
-{name:"Samsonite Travel",price:12000,delivery:5,img:img(34)},
-{name:"Xiaomi Urban",price:4000,delivery:4,img:img(35)},
-{name:"Puma Backpack",price:4800,delivery:3,img:img(36)}
+{name:"Herschel Backpack",price:7000,delivery:3},
+{name:"Nike Backpack",price:5000,delivery:2},
+{name:"Adidas Bag",price:4500,delivery:3},
+{name:"Samsonite Travel",price:12000,delivery:5},
+{name:"Xiaomi Urban",price:4000,delivery:4},
+{name:"Puma Backpack",price:4800,delivery:3}
 ],
 
 очки:[
-{name:"Ray-Ban Aviator",price:12000,delivery:3,img:img(37)},
-{name:"Oakley Sport",price:15000,delivery:4,img:img(38)},
-{name:"Gucci Sunglasses",price:20000,delivery:5,img:img(39)},
-{name:"Prada Glasses",price:18000,delivery:4,img:img(40)},
-{name:"Polaroid Classic",price:6000,delivery:3,img:img(41)},
-{name:"Carrera Sport",price:9000,delivery:4,img:img(42)}
+{name:"Ray-Ban Aviator",price:12000,delivery:3},
+{name:"Oakley Sport",price:15000,delivery:4},
+{name:"Gucci Sunglasses",price:20000,delivery:5},
+{name:"Prada Glasses",price:18000,delivery:4},
+{name:"Polaroid Classic",price:6000,delivery:3},
+{name:"Carrera Sport",price:9000,delivery:4}
 ],
 
 игры:[
-{name:"FIFA 24",price:5000,delivery:2,img:img(43)},
-{name:"Call of Duty",price:6000,delivery:3,img:img(44)},
-{name:"GTA V",price:4000,delivery:2,img:img(45)},
-{name:"Cyberpunk 2077",price:5500,delivery:3,img:img(46)},
-{name:"Minecraft",price:3000,delivery:1,img:img(47)},
-{name:"Fortnite Pack",price:2500,delivery:1,img:img(48)}
+{name:"FIFA 24",price:5000,delivery:2},
+{name:"Call of Duty",price:6000,delivery:3},
+{name:"GTA V",price:4000,delivery:2},
+{name:"Cyberpunk 2077",price:5500,delivery:3},
+{name:"Minecraft",price:3000,delivery:1},
+{name:"Fortnite Pack",price:2500,delivery:1}
 ],
 
 книги:[
-{name:"Гарри Поттер",price:2000,delivery:2,img:img(49)},
-{name:"1984",price:1500,delivery:2,img:img(50)},
-{name:"Дюна",price:2200,delivery:3,img:img(51)},
-{name:"Властелин колец",price:3000,delivery:4,img:img(52)},
-{name:"Богатый папа",price:1800,delivery:2,img:img(53)},
-{name:"Атлант",price:2500,delivery:3,img:img(54)}
+{name:"Гарри Поттер",price:2000,delivery:2},
+{name:"1984",price:1500,delivery:2},
+{name:"Дюна",price:2200,delivery:3},
+{name:"Властелин колец",price:3000,delivery:4},
+{name:"Богатый папа",price:1800,delivery:2},
+{name:"Атлант",price:2500,delivery:3}
 ],
 
 аксессуары:[
-{name:"Apple Case",price:3000,delivery:2,img:img(55)},
-{name:"Watch Strap",price:2000,delivery:3,img:img(56)},
-{name:"Laptop Sleeve",price:2500,delivery:3,img:img(57)},
-{name:"Phone Stand",price:1500,delivery:2,img:img(58)},
-{name:"Cable Organizer",price:1200,delivery:2,img:img(59)},
-{name:"Wireless Charger",price:3500,delivery:3,img:img(60)}
+{name:"Apple Case",price:3000,delivery:2},
+{name:"Watch Strap",price:2000,delivery:3},
+{name:"Laptop Sleeve",price:2500,delivery:3},
+{name:"Phone Stand",price:1500,delivery:2},
+{name:"Cable Organizer",price:1200,delivery:2},
+{name:"Wireless Charger",price:3500,delivery:3}
 ]
-
 };
 
 let current="телефоны";
@@ -254,6 +299,7 @@ let current="телефоны";
 const pDiv=document.getElementById("products");
 const cats=document.getElementById("cats");
 
+// Создаем кнопки категорий
 Object.keys(data).forEach(c=>{
 let b=document.createElement("button");
 b.innerText=c;
@@ -262,6 +308,7 @@ current=c;
 render();
 document.querySelectorAll(".categories button").forEach(x=>x.classList.remove("active"));
 b.classList.add("active");
+document.getElementById("search").value = ""; // очищаем поиск при смене категории
 };
 cats.appendChild(b);
 });
@@ -269,36 +316,101 @@ cats.children[0].classList.add("active");
 
 function render(){
 pDiv.innerHTML="";
-data[current]
-.filter(i=>i.price<=price.value && i.delivery<=delivery.value)
-.forEach(i=>{
-pDiv.innerHTML+=`
-<div class="card">
-<img src="${i.img}">
-<div>${i.name}</div>
-<div class="price">${i.price} ₽</div>
-<div>${i.delivery} дней</div>
-<button onclick="add()">В корзину</button>
-</div>`;
+let filtered = data[current];
+const searchTerm = document.getElementById("search").value.toLowerCase();
+const maxPrice = parseInt(price.value);
+const maxDelivery = parseInt(delivery.value);
+const currentCategory = current;
+  
+filtered = filtered.filter(item => 
+  item.price <= maxPrice && 
+  item.delivery <= maxDelivery &&
+  (searchTerm === "" || item.name.toLowerCase().includes(searchTerm))
+);
+  
+if(filtered.length === 0){
+  pDiv.innerHTML = `<div style="text-align:center;width:100%;padding:40px;">😔 Товаров не найдено</div>`;
+  return;
+}
+  
+filtered.forEach(item=>{
+const emoji = getEmoji(currentCategory, item.name);
+const card = document.createElement("div");
+card.className = "card";
+card.innerHTML = `
+  <div class="emoji">${emoji}</div>
+  <div><strong>${item.name}</strong></div>
+  <div class="price">${item.price.toLocaleString()} ₽</div>
+  <div>🚚 ${item.delivery} ${getDaysWord(item.delivery)}</div>
+  <button onclick="addToCart('${item.name.replace(/'/g, "\\'")}', ${item.price}, '${emoji}')">В корзину</button>
+`;
+pDiv.appendChild(card);
 });
 }
 
-function add(){
-cart++;
-document.getElementById("cartCount").innerText=cart;
+// Функция для правильного склонения слова "день"
+function getDaysWord(days) {
+  if (days >= 11 && days <= 19) return "дней";
+  const lastDigit = days % 10;
+  if (lastDigit === 1) return "день";
+  if (lastDigit >= 2 && lastDigit <= 4) return "дня";
+  return "дней";
+}
+
+// Функция добавления в корзину с подробностями
+function addToCart(name, price, emoji) {
+  cart++;
+  cartItems.push({name, price, emoji});
+  document.getElementById("cartCount").innerText = cart;
+  
+  // Визуальная обратная связь
+  const btn = event.target;
+  btn.textContent = "✓ Добавлено!";
+  setTimeout(() => {
+    btn.textContent = "В корзину";
+  }, 800);
 }
 
 function openCart(){
-alert("В корзине товаров: "+cart);
+  if(cart === 0){
+    alert("🛒 Корзина пуста");
+    return;
+  }
+  
+  let message = "🛒 Ваша корзина:\n\n";
+  let total = 0;
+  cartItems.forEach((item, index) => {
+    message += `${index+1}. ${item.emoji} ${item.name} - ${item.price.toLocaleString()} ₽\n`;
+    total += item.price;
+  });
+  message += `\n📦 Итого товаров: ${cart}\n💰 Общая сумма: ${total.toLocaleString()} ₽`;
+  message += `\n\n✅ Спасибо за покупку!`;
+  alert(message);
 }
 
-search.oninput=e=>{
-if(data[e.target.value]){current=e.target.value;render();}
+// Поиск с авто-обновлением
+const search = document.getElementById("search");
+search.oninput = () => {
+  render();
 };
 
-price.oninput=()=>{priceVal.innerText=price.value;render();}
-delivery.oninput=()=>{deliveryVal.innerText=delivery.value;render();}
+// Фильтры
+const priceSlider = document.getElementById("price");
+const priceVal = document.getElementById("priceVal");
+const deliverySlider = document.getElementById("delivery");
+const deliveryVal = document.getElementById("deliveryVal");
 
+priceSlider.oninput = () => {
+  priceVal.innerText = parseInt(priceSlider.value).toLocaleString();
+  render();
+}
+
+deliverySlider.oninput = () => {
+  deliveryVal.innerText = deliverySlider.value;
+  render();
+}
+
+// Инициализация
 render();
 </script>
 
